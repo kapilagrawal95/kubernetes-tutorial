@@ -1,0 +1,35 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    # kompose.cmd: kompose convert
+    # kompose.version: 1.26.1 (HEAD)
+    # traefik.enable: "true"
+    # traefik.http.routers.random-chat-grpc.entrypoints: web
+    # traefik.http.routers.random-chat-grpc.rule: Headers(`content-type`,`application/grpc`) && Headers(`service-id`, `chat`)
+    # traefik.http.routers.random-chat-grpc.service: random-chat-grpc
+    # traefik.http.routers.random-chat.entrypoints: web
+    # traefik.http.routers.random-chat.rule: PathPrefix(`/api`)
+    # traefik.http.routers.random-chat.service: random-chat
+    # traefik.http.services.random-chat-grpc.loadbalancer.server.port: "4000"
+    # # traefik.http.services.random-chat-grpc.loadbalancer.server.scheme: h2c
+    # traefik.http.services.random-chat.loadbalancer.server.port: "80"
+  creationTimestamp: null
+  labels:
+    io.kompose.service: random-chat
+  name: random-chat
+spec:
+  type: NodePort
+  ports:
+    - name: "chat-http"
+      port: 80
+      targetPort: 80
+      nodePort: 31625
+    - name: "chat-rpc"
+      port: 4000
+      targetPort: 4000
+      nodePort: 31626
+  selector:
+    io.kompose.service: random-chat
+status:
+  loadBalancer: {}

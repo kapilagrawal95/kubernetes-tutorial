@@ -1,0 +1,42 @@
+replicas: 4
+persistence:
+  enabled: true
+  annotations: {}
+  existingClaim: ""
+  storageClass: ""
+  VolumeName: ""
+  accessMode: ReadWriteOnce
+  size: 10Gi
+  subPath: ""
+service:
+  type: ClusterIP
+  clusterIP: ~
+  port: "9000"
+  nodePort: 32000
+resources:
+  requests:
+    memory: 500Mi
+makePolicyJob:
+  resources:
+    requests:
+      memory: 128Mi
+users:
+  - accessKey: testaccesskey
+    secretKey: testsecret
+    policy: consoleAdmin
+makeUserJob:
+  resources:
+    requests:
+      memory: 128Mi
+buckets:
+  - name: myfilebucket
+    policy: none
+    purge: false
+makeBucketJob:
+  resources:
+    requests:
+      memory: 500Mi
+customCommandJob:
+  resources:
+    requests:
+      memory: 128Mi

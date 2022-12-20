@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: match
+  labels:
+    io.kompose.service: match
+spec:
+  type: NodePort
+  selector:
+    io.kompose.service: match
+  ports:
+    - name: websocket
+      protocol: TCP
+      port: 80
+      targetPort: 80

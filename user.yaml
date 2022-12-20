@@ -1,0 +1,79 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  # annotations:
+  #   kompose.cmd: kompose convert
+  #   kompose.version: 1.26.1 (HEAD)
+    # traefik.enable: "true"
+    # traefik.http.routers.user-grpc.entrypoints: web
+    # traefik.http.routers.user-grpc.rule: Headers(`content-type`,`application/grpc`) && Headers(`service-id`, `user`)
+    # traefik.http.routers.user-grpc.service: user-grpc
+    # traefik.http.routers.user.entrypoints: web
+    # traefik.http.routers.user.rule: PathPrefix(`/api/user`)
+    # traefik.http.routers.user.service: user
+    # traefik.http.services.user-grpc.loadbalancer.server.port: "4000"
+    # traefik.http.services.user-grpc.loadbalancer.server.scheme: h2c
+    # traefik.http.services.user.loadbalancer.server.port: "80"
+  creationTimestamp: null
+  labels:
+    io.kompose.service: user
+  name: user
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: user
+  strategy: {}
+  template:
+    metadata:
+      annotations:
+        # kompose.cmd: kompose convert
+        # kompose.version: 1.26.1 (HEAD)
+        # traefik.enable: "true"
+        # traefik.http.routers.user-grpc.entrypoints: web
+        # traefik.http.routers.user-grpc.rule: Headers(`content-type`,`application/grpc`) && Headers(`service-id`, `user`)
+        # traefik.http.routers.user-grpc.service: user-grpc
+        # traefik.http.routers.user.entrypoints: web
+        # traefik.http.routers.user.rule: PathPrefix(`/api/user`)
+        # traefik.http.routers.user.service: user
+        # traefik.http.services.user-grpc.loadbalancer.server.port: "4000"
+        # traefik.http.services.user-grpc.loadbalancer.server.scheme: h2c
+        # traefik.http.services.user.loadbalancer.server.port: "80"
+      # creationTimestamp: null
+      labels:
+        io.kompose.service: user
+    spec:
+      containers:
+        - args:
+            - user
+          env:
+            - name: OBSERVABILITY_PROMETHEUS_PORT
+              value: "8080"
+            - name: OBSERVABILITY_TRACING_JAEGERURL
+              value: http://jaeger:14268/api/traces
+            - name: REDIS_ADDRS
+              value: rc-redis-cluster-0.rc-redis-cluster-headless.default:6379,rc-redis-cluster-1.rc-redis-cluster-headless.default:6379,rc-redis-cluster-2.rc-redis-cluster-headless.default:6379,rc-redis-cluster-3.rc-redis-cluster-headless.default:6379,rc-redis-cluster-4.rc-redis-cluster-headless.default:6379,rc-redis-cluster-5.rc-redis-cluster-headless.default:6379
+            - name: REDIS_PASSWORD
+              value: "$REDIS_PASSWORD"
+            - name: REDIS_EXPIRATIONHOUR
+              value: "24"
+            - name: USER_GRPC_SERVER_PORT
+              value: "4000"
+            - name: USER_HTTP_SERVER_PORT
+              value: "80"
+          image: minghsu0107/random-chat-api:main
+          name: user
+          ports:
+            - name: user-http
+              containerPort: 80
+            - name: tcp-redis-bus
+              containerPort: 4000
+          resources:
+            requests:
+              memory: "$MEMORY"
+              cpu: "$CPU"
+            limits:
+              memory: "$MEMORY"
+              cpu: "$CPU"
+      restartPolicy: Always
+status: {}

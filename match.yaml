@@ -1,0 +1,76 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  # annotations:
+    # kompose.cmd: kompose convert
+    # kompose.version: 1.26.1 (HEAD)
+    # traefik.enable: "true"
+    # traefik.http.routers.match.entrypoints: web
+    # traefik.http.routers.match.rule: PathPrefix(`/api/match`)
+    # traefik.http.routers.match.service: match
+    # traefik.http.services.match.loadbalancer.server.port: "80"
+  creationTimestamp: null
+  labels:
+    io.kompose.service: match
+  name: match
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: match
+  strategy: {}
+  template:
+    metadata:
+      annotations:
+        # kompose.cmd: kompose convert
+        # kompose.version: 1.26.1 (HEAD)
+        # traefik.enable: "true"
+        # traefik.http.routers.match.entrypoints: web
+        # traefik.http.routers.match.rule: PathPrefix(`/api/match`)
+        # traefik.http.routers.match.service: match
+        # traefik.http.services.match.loadbalancer.server.port: "80"
+      creationTimestamp: null
+      labels:
+        io.kompose.service: match
+    spec:
+      containers:
+        - args:
+            - match
+          env:
+            - name: MATCH_GRPC_CLIENT_CHAT_ENDPOINT
+              value: random-chat:4000
+            - name: MATCH_GRPC_CLIENT_USER_ENDPOINT
+              value: user:4000
+            - name: MATCH_HTTP_SERVER_MAXCONN
+              value: "200"
+            - name: MATCH_HTTP_SERVER_PORT
+              value: "80"
+            - name: MATCH_JWT_EXPIRATIONSECOND
+              value: "86400"
+            - name: MATCH_JWT_SECRET
+              value: "mysecret"
+            - name: OBSERVABILITY_PROMETHEUS_PORT
+              value: "8080"
+            - name: OBSERVABILITY_TRACING_JAEGERURL
+              value: http://jaeger:14268/api/traces
+            - name: REDIS_ADDRS
+              value: rc-redis-cluster-0.rc-redis-cluster-headless.default:6379,rc-redis-cluster-1.rc-redis-cluster-headless.default:6379,rc-redis-cluster-2.rc-redis-cluster-headless.default:6379,rc-redis-cluster-3.rc-redis-cluster-headless.default:6379,rc-redis-cluster-4.rc-redis-cluster-headless.default:6379,rc-redis-cluster-5.rc-redis-cluster-headless.default:6379
+            - name: REDIS_EXPIRATIONHOUR
+              value: "24"
+            - name: REDIS_PASSWORD
+              value: "$REDIS_PASSWORD"
+          image: minghsu0107/random-chat-api:main
+          name: match
+          ports:
+            - name: websocket
+              containerPort: 80
+          resources:
+            requests:
+              memory: "$MEMORY"
+              cpu: "$CPU"
+            limits:
+              memory: "$MEMORY"
+              cpu: "$CPU"
+
+      restartPolicy: Always
+status: {}

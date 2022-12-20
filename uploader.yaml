@@ -1,0 +1,70 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert
+    kompose.version: 1.26.1 (HEAD)
+    traefik.enable: "true"
+    traefik.http.routers.uploader.entrypoints: web
+    traefik.http.routers.uploader.rule: PathPrefix(`/api/file`)
+    traefik.http.routers.uploader.service: uploader
+    traefik.http.services.uploader.loadbalancer.server.port: "80"
+  creationTimestamp: null
+  labels:
+    io.kompose.service: uploader
+  name: uploader
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: uploader
+  strategy: {}
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert
+        kompose.version: 1.26.1 (HEAD)
+        traefik.enable: "true"
+        traefik.http.routers.uploader.entrypoints: web
+        traefik.http.routers.uploader.rule: PathPrefix(`/api/file`)
+        traefik.http.routers.uploader.service: uploader
+        traefik.http.services.uploader.loadbalancer.server.port: "80"
+      creationTimestamp: null
+      labels:
+        io.kompose.service: uploader
+    spec:
+      containers:
+        - args:
+            - uploader
+          env:
+            - name: OBSERVABILITY_PROMETHEUS_PORT
+              value: "8080"
+            - name: OBSERVABILITY_TRACING_JAEGERURL
+              value: http://jaeger:14268/api/traces
+            - name: UPLOADER_HTTP_SERVER_MAXBODYBYTE
+              value: "67108864"
+            - name: UPLOADER_HTTP_SERVER_MAXMEMORYBYTE
+              value: "16777216"
+            - name: UPLOADER_HTTP_SERVER_PORT
+              value: "80"
+            - name: UPLOADER_JWT_SECRET
+              value: $JWT_SECRET
+            - name: UPLOADER_S3_ACCESSKEY
+              value: "testaccesskey"
+            - name: UPLOADER_S3_BUCKET
+              value: "myfilebucket"
+            - name: UPLOADER_S3_DISABLESSL
+              value: "true"
+            - name: UPLOADER_S3_ENDPOINT
+              value: minio-0.minio.default.svc.cluster.local:9000
+            - name: UPLOADER_S3_REGION
+              value: "us-east-1"
+            - name: UPLOADER_S3_SECRETKEY
+              value: "testsecret"
+          image: minghsu0107/random-chat-api:main
+          name: uploader
+          ports:
+            - containerPort: 80
+          resources: {}
+      restartPolicy: Always
+status: {}

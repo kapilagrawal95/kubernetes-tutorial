@@ -1,0 +1,21 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    # nginx.ingress.kubernetes.io/rewrite-target: /
+  creationTimestamp: null
+  name: example-ingress
+spec:
+  rules:
+  - host: hello-world.info
+    http:
+      paths:
+      - backend:
+          service:
+            name: web
+            port:
+              number: 80
+        path: /
+        pathType: Prefix
+status:
+  loadBalancer: {}

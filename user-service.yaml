@@ -1,0 +1,35 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    # kompose.cmd: kompose convert
+    # kompose.version: 1.26.1 (HEAD)
+    # traefik.enable: "true"
+    # traefik.http.routers.user-grpc.entrypoints: web
+    # traefik.http.routers.user-grpc.rule: Headers(`content-type`,`application/grpc`) && Headers(`service-id`, `user`)
+    # traefik.http.routers.user-grpc.service: user-grpc
+    # traefik.http.routers.user.entrypoints: web
+    # traefik.http.routers.user.rule: PathPrefix(`/api/user`)
+    # traefik.http.routers.user.service: user
+    # traefik.http.services.user-grpc.loadbalancer.server.port: "4000"
+    # traefik.http.services.user-grpc.loadbalancer.server.scheme: h2c
+    # traefik.http.services.user.loadbalancer.server.port: "80"
+  creationTimestamp: null
+  labels:
+    io.kompose.service: user
+  name: user
+spec:
+  type: NodePort
+  ports:
+    - name: user-http
+      port: 80
+      targetPort: 80
+      nodePort: 31368
+    - name: user-rpc
+      port: 4000
+      targetPort: 4000
+      nodePort: 31367
+  selector:
+    io.kompose.service: user
+status:
+  loadBalancer: {}

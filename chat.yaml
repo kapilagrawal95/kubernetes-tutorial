@@ -1,0 +1,86 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    # kompose.cmd: kompose convert
+    # kompose.version: 1.26.1 (HEAD)
+    # traefik.enable: "true"
+    # traefik.http.routers.random-chat-grpc.entrypoints: web
+    # traefik.http.routers.random-chat-grpc.rule: Headers(`content-type`,`application/grpc`) && Headers(`service-id`, `chat`)
+    # traefik.http.routers.random-chat-grpc.service: random-chat-grpc
+    # traefik.http.routers.random-chat.entrypoints: web
+    # traefik.http.routers.random-chat.rule: PathPrefix(`/api`)
+    # traefik.http.routers.random-chat.service: random-chat
+    # traefik.http.services.random-chat-grpc.loadbalancer.server.port: "4000"
+    # # traefik.http.services.random-chat-grpc.loadbalancer.server.scheme: h2c
+    # traefik.http.services.random-chat.loadbalancer.server.port: "80"
+  creationTimestamp: null
+  labels:
+    io.kompose.service: random-chat
+  name: random-chat
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: random-chat
+  strategy: {}
+  template:
+    metadata:
+      annotations:
+      #   kompose.cmd: kompose convert
+      #   kompose.version: 1.26.1 (HEAD)
+      #   traefik.enable: "true"
+      #   traefik.http.routers.random-chat-grpc.entrypoints: web
+      #   traefik.http.routers.random-chat-grpc.rule: Headers(`content-type`,`application/grpc`) && Headers(`service-id`, `chat`)
+      #   traefik.http.routers.random-chat-grpc.service: random-chat-grpc
+      #   traefik.http.routers.random-chat.entrypoints: web
+      #   traefik.http.routers.random-chat.rule: PathPrefix(`/api`)
+      #   traefik.http.routers.random-chat.service: random-chat
+      #   traefik.http.services.random-chat-grpc.loadbalancer.server.port: "4000"
+      #   # traefik.http.services.random-chat-grpc.loadbalancer.server.scheme: h2c
+      #   traefik.http.services.random-chat.loadbalancer.server.port: "80"
+      # creationTimestamp: null
+      labels:
+        io.kompose.service: random-chat
+    spec:
+      containers:
+        - args:
+            - chat
+          env:
+            - name: CHAT_GRPC_SERVER_PORT
+              value: "4000"
+            - name: CHAT_HTTP_SERVER_MAXCONN
+              value: "200"
+            - name: CHAT_HTTP_SERVER_PORT
+              value: "80"
+            - name: CHAT_JWT_SECRET
+              value: "mysecret"
+            - name: CHAT_MESSAGE_MAXNUM
+              value: "500"
+            - name: CHAT_MESSAGE_MAXSIZEBYTE
+              value: "4096"
+            - name: OBSERVABILITY_PROMETHEUS_PORT
+              value: "8080"
+            - name: OBSERVABILITY_TRACING_JAEGERURL
+              value: http://jaeger:14268/api/traces
+            - name: REDIS_ADDRS
+              value: rc-redis-cluster-0.rc-redis-cluster-headless.default:6379,rc-redis-cluster-1.rc-redis-cluster-headless.default:6379,rc-redis-cluster-2.rc-redis-cluster-headless.default:6379,rc-redis-cluster-3.rc-redis-cluster-headless.default:6379,rc-redis-cluster-4.rc-redis-cluster-headless.default:6379,rc-redis-cluster-5.rc-redis-cluster-headless.default:6379
+            - name: REDIS_EXPIRATIONHOUR
+              value: "24"
+            - name: REDIS_PASSWORD
+              value: "$REDIS_PASSWORD"
+          image: minghsu0107/random-chat-api:main
+          name: random-chat
+          ports:
+            - containerPort: 80
+            - containerPort: 4000
+          resources:
+            requests:
+              memory: "$MEMORY"
+              cpu: "$CPU"
+            limits:
+              memory: "$MEMORY"
+              cpu: "$CPU"
+
+      restartPolicy: Always
+status: {}
